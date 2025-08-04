@@ -1,14 +1,15 @@
 {
   "name": "server",
   "version": "1.0.0",
+  "description": "TEAM PIKU backend API for link management and admin access",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "build": "echo 'No build step required'"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": ["express", "node", "api", "team-piku", "backend"],
+  "author": "Manji",
+  "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
