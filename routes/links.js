@@ -8,25 +8,23 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 
 const generateCode = async () => {
-  const res = await pool.query(`
-    WITH nums AS (
-      SELECT generate_series(1,
-        COALESCE(MAX(CAST(SUBSTRING(code, 3) AS INTEGER)), 0) + 1
-      ) AS n
-      FROM links
-    )
-    SELECT 'TP' || LPAD(n::text, 5, '0') AS code
-    FROM nums
-    WHERE n NOT IN (
-      SELECT CAST(SUBSTRING(code, 3) AS INTEGER) FROM links
-    )
-    ORDER BY n ASC
-    LIMIT 1;
-  `);
+  const res = await pool.query("SELECT code FROM links");
+  const existing = res.rows
+    .map(r => parseInt(r.code.replace(/^TP/, ""), 10))
+    .filter(num => !isNaN(num))
+    .sort((a, b) => a - b);
 
-  return res.rows[0].code;
+  let next = 1;
+  for (let num of existing) {
+    if (num === next) {
+      next++;
+    } else if (num > next) {
+      break; // gap found
+    }
+  }
+
+  return "TP" + String(next).padStart(5, "0");
 };
-
 
 // Add a new link
 router.post("/add", async (req, res) => {
