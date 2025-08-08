@@ -8,9 +8,9 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 
 const generateCode = async () => {
-  const res = await pool.query('SELECT COUNT(*) FROM links');
-  const count = parseInt(res.rows[0].count);
-  return `TP${(count + 1).toString().padStart(5, '0')}`;
+  const res = await pool.query("SELECT MAX(CAST(SUBSTRING(code, 3) AS INTEGER)) AS max_code FROM links");
+  const maxCode = res.rows[0].max_code || 0;
+  return `TP${(maxCode + 1).toString().padStart(5, '0')}`;
 };
 
 
