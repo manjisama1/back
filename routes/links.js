@@ -9,20 +9,22 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 const generateCode = async () => {
   const res = await pool.query(`
-    WITH numbers AS (
-      SELECT generate_series(1, COALESCE(MAX(CAST(SUBSTRING(code, 3) AS INTEGER)), 0) + 1) AS num
+    WITH nums AS (
+      SELECT generate_series(1,
+        COALESCE(MAX(CAST(SUBSTRING(code, 3) AS INTEGER)), 0) + 1
+      ) AS n
       FROM links
     )
-    SELECT 'TP' || LPAD(num::text, 5, '0') AS next_code
-    FROM numbers
-    WHERE num NOT IN (
+    SELECT 'TP' || LPAD(n::text, 5, '0') AS code
+    FROM nums
+    WHERE n NOT IN (
       SELECT CAST(SUBSTRING(code, 3) AS INTEGER) FROM links
     )
-    ORDER BY num ASC
+    ORDER BY n ASC
     LIMIT 1;
   `);
 
-  return res.rows[0].next_code;
+  return res.rows[0].code;
 };
 
 
